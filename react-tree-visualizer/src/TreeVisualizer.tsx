@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ErrorComponent from "./ErrorComponent";
 
 interface Props {
   component: React.ComponentType<any>;
@@ -9,74 +8,102 @@ interface Props {
 }
 
 interface ComponentNode {
-  type: string;
   props: any;
   children?: ComponentNode[];
 }
 
+/**
+ * @param Component a React component class or function from which to extract children
+ * @param depth the current depth of the tree
+ * @param maxDepth the maximum depth of the tree
+ * @returns returns a ComponentNode object
+ *
+ * @description this function recursively extracts children from a React component
+ */
 const createComponentTree = (
   Component: React.ComponentType<any>,
   depth: number,
   maxDepth: number
 ): ComponentNode => {
-  if (depth > maxDepth) return <ErrorComponent />;
+  if (depth > maxDepth) return <></>;
 
   const props = Component.defaultProps ? { ...Component.defaultProps } : {};
-
   return {
-    type: typeof Component,
     props,
     children: getChildren(Component, depth + 1, maxDepth),
   };
 };
 
+/**
+ *
+ * @param Component a React component class or function from which to extract children
+ * @param depth the current depth of the tree
+ * @param maxDepth the maximum depth of the tree
+ * @returns returns an array of ComponentNode objects
+ *
+ * @description this function recursively extracts children from a React component
+ */
 const getChildren = (
   Component: React.ComponentType<any>,
   depth: number,
   maxDepth: number
 ): ComponentNode[] => {
   if (!Component || !Component.prototype || !Component.prototype.render)
-    throw Error("Component must be a class component");
+    return [];
 
-  const children: Array<JSX.Element> = [];
-  const component = new Component();
-  const renderOutput = component.render();
+  const children: ComponentNode[] = [];
+  // create a new instance of the component
+  const component = React.createElement(Component);
+  if (!component) return [];
 
-  if (!renderOutput) return null;
-
-  React.Children.forEach(renderOutput.props.children, (child: any) => {
+  React.Children.forEach(component.props.children, (child: any) => {
     if (!child) return;
     if (typeof child.type === "string") return; // skip HTML tags
-    const childComponent = createComponentTree(child.type, depth, maxDepth);
+
+    const childComponent = createComponentTree(child, depth, maxDepth);
+
     if (!childComponent) return;
+
     children.push(childComponent);
   });
+
+  if (depth === maxDepth) return children;
+  if (depth === 1000) return children;
 
   return children;
 };
 
+/**
+ *
+ * @param Component a React component class or function from which to extract children
+ * @param maxDepth the maximum depth of the tree
+ * @param showProps whether to show the props of each component
+ * @param highlightColor the color to highlight the selected component
+ *
+ * @description this component renders a tree of React components
+ *
+ * @returns returns a React component
+ */
 const TreeVisualizer: React.FC<Props> = ({
   component: Component,
   maxDepth = Infinity,
   showProps = true,
   highlightColor = "#FF5722",
 }) => {
-  const [selectedNode, setSelectedNode] = useState<ComponentNode>(null);
+  const [selectedNode, setSelectedNode] = useState<ComponentNode>();
 
   const handleNodeClick = (node: ComponentNode) => {
     setSelectedNode(node);
   };
 
   const renderTree = (node: ComponentNode, depth: number): JSX.Element => {
-    if (!node) return null;
-    const { displayName, props, children } = node;
+    if (!node) return <></>;
+    const { props, children } = node;
 
     const isLeaf = !children || children.length === 0;
     const isHighlighted = node === selectedNode;
 
-    const label = `${displayName}${
-      showProps ? `(${JSON.stringify(props)})` : ""
-    }`;
+    const label = `${"test"}${showProps ? `(${JSON.stringify(props)})` : ""}`;
     const labelStyle = isHighlighted
       ? { fontWeight: "bold", color: highlightColor }
       : {};
