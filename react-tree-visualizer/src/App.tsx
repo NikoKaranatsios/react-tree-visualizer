@@ -1,3 +1,5 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
 import TreeVisualizer from "./TreeVisualizer";
 
 const MyChildComponent = ({ text }: { text: string }) => {
@@ -21,15 +23,19 @@ const MyComponent = () => {
 
 function App() {
   return (
-    <div className="App">
-      <TreeVisualizer
-        component={MyComponent}
-        maxDepth={2}
-        showProps={true}
-        highlightColor={"#FF5722"}
-      />
-    </div>
+    <React.StrictMode>
+      <div className="App">
+        <TreeVisualizer
+          component={MyComponent}
+          maxDepth={2}
+          showProps={true}
+          highlightColor={"#FF5722"}
+        />
+      </div>
+    </React.StrictMode>
   );
 }
 
-export default App;
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <App />
+);

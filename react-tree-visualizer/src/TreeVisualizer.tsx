@@ -119,6 +119,8 @@ const TreeVisualizer: React.FC<Props> = ({
   };
 
   const componentTree = createComponentTree(Component, 0, maxDepth);
+  console.log(componentTree);
+
   if (!componentTree) return null;
 
   return (
