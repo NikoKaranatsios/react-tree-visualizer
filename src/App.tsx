@@ -26,7 +26,7 @@ function App() {
     <React.StrictMode>
       <div className="App">
         <TreeVisualizer
-          component={MyComponent}
+          component={<div><h1>My Component</h1><MyChildComponent text="Example child" /></div>}
           maxDepth={2}
           showProps={true}
           highlightColor={"#FF5722"}

@@ -1,5 +1,5 @@
 export default function ErrorComponent(
-  props
+  props: { text?: string }
 ): React.ReactComponentElement<any> {
   return (
     <div>

@@ -32,7 +32,7 @@ const App = () => {
     return (
         <div>
             <h1>My React App</h1>
-            <TreeVisualizer component={MyComponent} />
+            <TreeVisualizer component={<section><MyComponent /></section>} />
         </div>
     );
 };
@@ -72,3 +72,7 @@ By modifying these props, developers can customize the visualization to their sp
 ## Conclusion
 
 react-tree-visualizer is a simple and effective npm package for visualizing the component tree of a React application. By generating a nested list that displays the parent and children components of each component, as well as the properties passed through each component, developers can quickly gain insight into the structure of their React application.
+
+## Inspection scope
+
+Pass a JSX element to inspect its explicitly declared `props.children`, including host elements and fragments: `<TreeVisualizer component={<section><MyComponent /></section>} />`. Passing a component type remains supported and shows its name and default props. A component’s internally rendered children are not visible through this API: the visualizer does not execute components, call hooks, or inspect private React internals. Use React DevTools to inspect a mounted application tree. `maxDepth={0}` displays only the root. Props are displayed locally and are never logged to the console; circular values, callbacks and BigInts are supported.
